@@ -1,0 +1,49 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv("id3-data.csv")
+print(data)
+
+x = np.array(data)[:, :-1]
+print("n The attributes are: ", x)
+y = np.array(data)[:, -1]
+print("n The target is: ", y)
+
+
+def train(c, t):
+    specific_hypothesis = []
+    for i, val in enumerate(t):
+        if val == "yes":
+            specific_hypothesis = c[i].copy()
+            break
+
+    for i, val in enumerate(c):
+        if t[i] == "yes":
+            for x in range(len(specific_hypothesis)):
+                if val[x] != specific_hypothesis[x]:
+                    specific_hypothesis[x] = '?'
+                else:
+                    pass
+
+    return specific_hypothesis
+
+
+def predict(c, t, s):
+    error = 0
+    for i, u in enumerate(c):
+        flag = 'yes'
+        for j in range(len(s)):
+            if s[j] == '?':
+                continue
+            if s[j] != u[j]:
+                flag = 'no'
+                break
+        if flag != t[i]:
+            error += 1
+    print("Error: ", error / len(c))
+
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+h = train(x_train, y_train)
+predict(x_test, y_test, h)
